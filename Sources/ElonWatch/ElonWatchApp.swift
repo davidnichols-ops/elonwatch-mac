@@ -4,11 +4,19 @@ import UserNotifications
 @main
 struct ElonWatchApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @State private var introFinished = false
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if introFinished {
+                ContentView()
+                    .frame(minWidth: 1100, minHeight: 700)
+            } else {
+                IntroPlayerView {
+                    introFinished = true
+                }
                 .frame(minWidth: 1100, minHeight: 700)
+            }
         }
         .windowStyle(.hiddenTitleBar)
         .commands {

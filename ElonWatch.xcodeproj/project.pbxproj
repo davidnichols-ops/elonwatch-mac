@@ -10,6 +10,7 @@
 		27154506687825D5F82AC590 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F671BBBBF9AF5F39438E9780 /* Assets.xcassets */; };
 		2F165C02C12AE15EE06110D6 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F0F176699EA5E68755176 /* Models.swift */; };
 		4B95C29FEA03F2A0ED8C91C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43FBFF0EFDDB817BC850E86 /* ContentView.swift */; };
+		6C286E2B4DA388080DD6A07A /* IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E260C849680F55E9D51AE6B /* IntroPlayerView.swift */; };
 		7C77CB0A0C3C7C2B3D68F2EE /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4B7DE9B54EC770FE5E29A /* Database.swift */; };
 		7EB455FE5BF0298293C061AE /* ScraperRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */; };
 		907A50DB480511F91B70930B /* ElonWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A887693B58D8E5BDEB8A04 /* ElonWatchApp.swift */; };
@@ -21,6 +22,7 @@
 		08EB6B5217881BB9870E3D75 /* ElonWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElonWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScraperRunner.swift; sourceTree = "<group>"; };
 		3F9F0F176699EA5E68755176 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		5E260C849680F55E9D51AE6B /* IntroPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroPlayerView.swift; sourceTree = "<group>"; };
 		98FC87CC23B97DD1D87065E4 /* ElonWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ElonWatch.entitlements; sourceTree = "<group>"; };
 		AEDF86B617016EE5E03D1EBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B9D4B7DE9B54EC770FE5E29A /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
@@ -56,6 +58,7 @@
 				04A887693B58D8E5BDEB8A04 /* ElonWatchApp.swift */,
 				E9E6B2839B6FCB4BAD34D7BB /* FeedViewModel.swift */,
 				AEDF86B617016EE5E03D1EBD /* Info.plist */,
+				5E260C849680F55E9D51AE6B /* IntroPlayerView.swift */,
 				3F9F0F176699EA5E68755176 /* Models.swift */,
 				1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */,
 			);
@@ -141,6 +144,7 @@
 				7C77CB0A0C3C7C2B3D68F2EE /* Database.swift in Sources */,
 				907A50DB480511F91B70930B /* ElonWatchApp.swift in Sources */,
 				95FACDA850D9B2EE6AA0B4DA /* FeedViewModel.swift in Sources */,
+				6C286E2B4DA388080DD6A07A /* IntroPlayerView.swift in Sources */,
 				2F165C02C12AE15EE06110D6 /* Models.swift in Sources */,
 				7EB455FE5BF0298293C061AE /* ScraperRunner.swift in Sources */,
 			);
