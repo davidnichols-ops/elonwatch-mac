@@ -1,0 +1,9 @@
+build/
+dist/
+*.xcuserstate
+*.xcuserdatad
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+.DS_Store
+Sources/ElonWatch/Resources/elonwatch_scraper

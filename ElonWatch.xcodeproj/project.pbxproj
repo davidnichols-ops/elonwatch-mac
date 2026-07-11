@@ -1,0 +1,345 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		27154506687825D5F82AC590 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F671BBBBF9AF5F39438E9780 /* Assets.xcassets */; };
+		2F165C02C12AE15EE06110D6 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F0F176699EA5E68755176 /* Models.swift */; };
+		4B95C29FEA03F2A0ED8C91C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43FBFF0EFDDB817BC850E86 /* ContentView.swift */; };
+		7C77CB0A0C3C7C2B3D68F2EE /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4B7DE9B54EC770FE5E29A /* Database.swift */; };
+		7EB455FE5BF0298293C061AE /* ScraperRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */; };
+		907A50DB480511F91B70930B /* ElonWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04A887693B58D8E5BDEB8A04 /* ElonWatchApp.swift */; };
+		95FACDA850D9B2EE6AA0B4DA /* FeedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E6B2839B6FCB4BAD34D7BB /* FeedViewModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		04A887693B58D8E5BDEB8A04 /* ElonWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElonWatchApp.swift; sourceTree = "<group>"; };
+		08EB6B5217881BB9870E3D75 /* ElonWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ElonWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScraperRunner.swift; sourceTree = "<group>"; };
+		3F9F0F176699EA5E68755176 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		98FC87CC23B97DD1D87065E4 /* ElonWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ElonWatch.entitlements; sourceTree = "<group>"; };
+		AEDF86B617016EE5E03D1EBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B9D4B7DE9B54EC770FE5E29A /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
+		E43FBFF0EFDDB817BC850E86 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E9E6B2839B6FCB4BAD34D7BB /* FeedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewModel.swift; sourceTree = "<group>"; };
+		F671BBBBF9AF5F39438E9780 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2B2F66CEB4A1C6D7CCA4E765 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				CB5EED00C11BAB9BA9CB2C0E /* ElonWatch */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		6A39536AFB57766FFD8D954B = {
+			isa = PBXGroup;
+			children = (
+				2B2F66CEB4A1C6D7CCA4E765 /* Sources */,
+				F0E4C58819BAA743FE917B38 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CB5EED00C11BAB9BA9CB2C0E /* ElonWatch */ = {
+			isa = PBXGroup;
+			children = (
+				F671BBBBF9AF5F39438E9780 /* Assets.xcassets */,
+				E43FBFF0EFDDB817BC850E86 /* ContentView.swift */,
+				B9D4B7DE9B54EC770FE5E29A /* Database.swift */,
+				98FC87CC23B97DD1D87065E4 /* ElonWatch.entitlements */,
+				04A887693B58D8E5BDEB8A04 /* ElonWatchApp.swift */,
+				E9E6B2839B6FCB4BAD34D7BB /* FeedViewModel.swift */,
+				AEDF86B617016EE5E03D1EBD /* Info.plist */,
+				3F9F0F176699EA5E68755176 /* Models.swift */,
+				1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */,
+			);
+			path = ElonWatch;
+			sourceTree = "<group>";
+		};
+		F0E4C58819BAA743FE917B38 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				08EB6B5217881BB9870E3D75 /* ElonWatch.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9ADF334D160722228A0C0A22 /* ElonWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3EE661F27092153388C4D467 /* Build configuration list for PBXNativeTarget "ElonWatch" */;
+			buildPhases = (
+				3CBDCFF3DAA6D00C93A777AD /* Sources */,
+				92DCACB1B3DC4300E0786F00 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ElonWatch;
+			packageProductDependencies = (
+			);
+			productName = ElonWatch;
+			productReference = 08EB6B5217881BB9870E3D75 /* ElonWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DDECC2E28B5A6F6F63FB0153 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = DB853124EE140D4E20CF1AC2 /* Build configuration list for PBXProject "ElonWatch" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 6A39536AFB57766FFD8D954B;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F0E4C58819BAA743FE917B38 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9ADF334D160722228A0C0A22 /* ElonWatch */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		92DCACB1B3DC4300E0786F00 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27154506687825D5F82AC590 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3CBDCFF3DAA6D00C93A777AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B95C29FEA03F2A0ED8C91C4 /* ContentView.swift in Sources */,
+				7C77CB0A0C3C7C2B3D68F2EE /* Database.swift in Sources */,
+				907A50DB480511F91B70930B /* ElonWatchApp.swift in Sources */,
+				95FACDA850D9B2EE6AA0B4DA /* FeedViewModel.swift in Sources */,
+				2F165C02C12AE15EE06110D6 /* Models.swift in Sources */,
+				7EB455FE5BF0298293C061AE /* ScraperRunner.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		562A683D8A713BD87846C8A9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/ElonWatch/ElonWatch.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Sources/ElonWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		70A3F70442D54C8DFE232642 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Sources/ElonWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elonwatch.futuresync;
+				PRODUCT_NAME = ElonWatch;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		8DCEBC6F0F1C41D1461421D0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = Sources/ElonWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 2.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.elonwatch.futuresync;
+				PRODUCT_NAME = ElonWatch;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		EF3B61A83793F8709A04D236 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/ElonWatch/ElonWatch.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Sources/ElonWatch/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3EE661F27092153388C4D467 /* Build configuration list for PBXNativeTarget "ElonWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EF3B61A83793F8709A04D236 /* Debug */,
+				562A683D8A713BD87846C8A9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DB853124EE140D4E20CF1AC2 /* Build configuration list for PBXProject "ElonWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70A3F70442D54C8DFE232642 /* Debug */,
+				8DCEBC6F0F1C41D1461421D0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DDECC2E28B5A6F6F63FB0153 /* Project object */;
+}
