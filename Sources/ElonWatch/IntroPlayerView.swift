@@ -1,8 +1,56 @@
 import SwiftUI
-import AVKit
 import AVFoundation
+import AppKit
 
-// MARK: - Intro splash: plays intro.mp4 fullscreen, then fires onComplete
+// MARK: - AVPlayerLayer wrapped in NSViewRepresentable
+// Avoids the _AVKit_SwiftUI VideoPlayer crash on macOS 26 (Xcode 26).
+
+struct AVPlayerLayerView: NSViewRepresentable {
+    let player: AVPlayer
+
+    func makeNSView(context: Context) -> NSView {
+        let view = PlayerNSView()
+        view.player = player
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        if let view = nsView as? PlayerNSView {
+            view.player = player
+        }
+    }
+
+    class PlayerNSView: NSView {
+        var playerLayer: AVPlayerLayer?
+
+        var player: AVPlayer? {
+            didSet { playerLayer?.player = player }
+        }
+
+        override func makeBackingLayer() -> CALayer {
+            let layer = AVPlayerLayer()
+            layer.videoGravity = .resizeAspectFill
+            layer.backgroundColor = NSColor.black.cgColor
+            self.playerLayer = layer
+            playerLayer?.player = player
+            return layer
+        }
+
+        override init(frame: NSRect) {
+            super.init(frame: frame)
+            wantsLayer = true
+        }
+
+        required init?(coder: NSCoder) { fatalError() }
+
+        override func layout() {
+            super.layout()
+            playerLayer?.frame = bounds
+        }
+    }
+}
+
+// MARK: - Intro splash view
 
 struct IntroPlayerView: View {
     let onComplete: () -> Void
@@ -13,11 +61,9 @@ struct IntroPlayerView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-
             if let player {
-                VideoPlayer(player: player)
+                AVPlayerLayerView(player: player)
                     .ignoresSafeArea()
-                    .disabled(true)          // no controls
             }
         }
         .opacity(opacity)
@@ -26,21 +72,17 @@ struct IntroPlayerView: View {
 
     private func startPlayback() {
         guard let url = Bundle.main.url(forResource: "intro", withExtension: "mp4") else {
-            // No video found — skip straight to app
             onComplete()
             return
         }
 
-        let item   = AVPlayerItem(url: url)
-        let p      = AVPlayer(playerItem: item)
-        p.isMuted  = false
-        p.volume   = 1.0
+        let item = AVPlayerItem(url: url)
+        let p    = AVPlayer(playerItem: item)
+        p.volume = 1.0
         self.player = p
 
-        // Fade in
         withAnimation(.easeIn(duration: 0.3)) { opacity = 1 }
 
-        // Observe end of playback
         NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: item,
