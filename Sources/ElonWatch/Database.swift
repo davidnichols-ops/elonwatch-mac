@@ -27,6 +27,14 @@ private let domainKeywords: [Domain: [String]] = [
     .culture:  ["meme","tweet","post","interview","podcast","video","book",
                 "philosophy","simulation","consciousness","comedy","joke","funny",
                 "trolling","shitpost","human","civilization","future"],
+    .glaze:    ["genius","visionary","brilliant","incredible","amazing","greatest",
+                "legendary","icon","hero","pioneer","revolutionary","goat",
+                "inspires","inspiring","admire","praise","praises","praised",
+                "thank elon","love elon","grateful","thank you elon","saved",
+                "changed my life","changed the world","only elon","elon is right",
+                "elon deserves","respect elon","support elon","proud of elon",
+                "well done elon","remarkable","outstanding","historic achievement",
+                "congrat","elon wins","elon nailed"],
 ]
 
 private let urgencyBoosts: [(Int, [String])] = [

@@ -31,6 +31,7 @@ enum Domain: String, CaseIterable {
     case chaos    = "CHAOS"
     case ego      = "EGO"
     case culture  = "CULTURE"
+    case glaze    = "GLAZE"
 
     var icon: String {
         switch self {
@@ -42,6 +43,7 @@ enum Domain: String, CaseIterable {
         case .chaos:    return "!!"
         case .ego:      return "★"
         case .culture:  return "◉"
+        case .glaze:    return "✦"
         }
     }
 
@@ -55,6 +57,7 @@ enum Domain: String, CaseIterable {
         case .chaos:    return "#ff1744"
         case .ego:      return "#ffd740"
         case .culture:  return "#ffffff"
+        case .glaze:    return "#ffd740"
         }
     }
 }

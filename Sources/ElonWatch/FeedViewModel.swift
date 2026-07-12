@@ -4,7 +4,7 @@ import Combine
 @MainActor
 class FeedViewModel: ObservableObject {
     @Published var items:       [SignalItem] = []
-    @Published var allItems:    [SignalItem] = []   // unfiltered, for Glaze tab
+    @Published var allItems:    [SignalItem] = []   // unfiltered; drives domain pulse bar counts
     @Published var brainStats:  BrainStats?
     @Published var sourceStats: [SourceStats] = []
     @Published var totalCount   = 0
