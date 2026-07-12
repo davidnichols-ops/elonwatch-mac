@@ -90,10 +90,20 @@ class FeedViewModel: ObservableObject {
         ) { [weak self] note in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                self.lens.generation &+= 1   // re-fire pipeline
+                self.lens.generation &+= 1
                 if let count = note.userInfo?["count"] as? Int, count > 0 {
                     self.checkForNewHighSignal()
                 }
+            }
+        }
+
+        // Attention shift: user opened an item, re-sort with updated attention field.
+        // 200ms debounce so rapid clicks collapse into one re-sort.
+        NotificationCenter.default.addObserver(
+            forName: .attentionShifted, object: nil, queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.lens.generation &+= 1
             }
         }
     }
@@ -105,6 +115,9 @@ class FeedViewModel: ObservableObject {
         if let domain = lensValue.domain {
             fetched = fetched.filter { $0.domain.rawValue == domain }
         }
+        // SessionMemory quietly reorders by composite attention+urgency+recency score.
+        // Before 3 engagements it's a no-op — pure urgency+recency ordering.
+        fetched.sort { SessionMemory.shared.score(for: $0) > SessionMemory.shared.score(for: $1) }
         items       = fetched
         allItems    = ElonDB.shared.fetchRecent(limit: 500)
         sourceStats = ElonDB.shared.fetchStats()

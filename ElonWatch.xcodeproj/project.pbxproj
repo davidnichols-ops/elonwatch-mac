@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		27154506687825D5F82AC590 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F671BBBBF9AF5F39438E9780 /* Assets.xcassets */; };
 		2F165C02C12AE15EE06110D6 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F9F0F176699EA5E68755176 /* Models.swift */; };
+		4B8C9578535AA87F11C328D2 /* SessionMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8622EA0F88A334D595631CB1 /* SessionMemory.swift */; };
 		4B95C29FEA03F2A0ED8C91C4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43FBFF0EFDDB817BC850E86 /* ContentView.swift */; };
 		6C286E2B4DA388080DD6A07A /* IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E260C849680F55E9D51AE6B /* IntroPlayerView.swift */; };
 		7C77CB0A0C3C7C2B3D68F2EE /* Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9D4B7DE9B54EC770FE5E29A /* Database.swift */; };
@@ -23,6 +24,7 @@
 		1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScraperRunner.swift; sourceTree = "<group>"; };
 		3F9F0F176699EA5E68755176 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		5E260C849680F55E9D51AE6B /* IntroPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroPlayerView.swift; sourceTree = "<group>"; };
+		8622EA0F88A334D595631CB1 /* SessionMemory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionMemory.swift; sourceTree = "<group>"; };
 		98FC87CC23B97DD1D87065E4 /* ElonWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ElonWatch.entitlements; sourceTree = "<group>"; };
 		AEDF86B617016EE5E03D1EBD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B9D4B7DE9B54EC770FE5E29A /* Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Database.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				5E260C849680F55E9D51AE6B /* IntroPlayerView.swift */,
 				3F9F0F176699EA5E68755176 /* Models.swift */,
 				1B29C167DE8E2A990ABAC781 /* ScraperRunner.swift */,
+				8622EA0F88A334D595631CB1 /* SessionMemory.swift */,
 			);
 			path = ElonWatch;
 			sourceTree = "<group>";
@@ -147,6 +150,7 @@
 				6C286E2B4DA388080DD6A07A /* IntroPlayerView.swift in Sources */,
 				2F165C02C12AE15EE06110D6 /* Models.swift in Sources */,
 				7EB455FE5BF0298293C061AE /* ScraperRunner.swift in Sources */,
+				4B8C9578535AA87F11C328D2 /* SessionMemory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

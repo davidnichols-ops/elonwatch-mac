@@ -528,6 +528,8 @@ struct SignalRow: View {
             : nil
         )
         .onTapGesture {
+            SessionMemory.shared.recordEngagement(with: item)
+            NotificationCenter.default.post(name: .attentionShifted, object: nil)
             if let url = URL(string: item.url), !item.url.isEmpty {
                 NSWorkspace.shared.open(url)
             }

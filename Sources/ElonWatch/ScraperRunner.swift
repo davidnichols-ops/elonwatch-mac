@@ -118,7 +118,8 @@ class ScraperRunner: ObservableObject {
 }
 
 extension Notification.Name {
-    static let scrapeCompleted = Notification.Name("scrapeCompleted")
+    static let scrapeCompleted  = Notification.Name("scrapeCompleted")
+    static let attentionShifted = Notification.Name("attentionShifted")
 }
 
 // MARK: - Push Notifications
