@@ -56,13 +56,30 @@ private let sentimentHostile  = ["attack","sue","ban","fired","war","threaten",
 private let sentimentPlayful  = ["lol","joke","meme","funny","troll","haha","420","69"]
 
 func scoreDomain(_ text: String) -> Domain {
-    var best: Domain = .culture
-    var bestScore = 0
+    var scores: [Domain: Int] = [:]
     for (domain, kws) in domainKeywords {
         let score = kws.filter { text.contains($0) }.count
-        if score > bestScore { bestScore = score; best = domain }
+        if score > 0 { scores[domain] = score }
     }
-    return best
+
+    // GLAZE only fires when the content is actually positive.
+    // If GLAZE would win on keyword count but sentiment isn't bullish, remove it
+    // and fall back to the second-best domain.
+    if let glazeScore = scores[.glaze] {
+        let sentiment = scoreSentiment(text)
+        if sentiment != .bullish {
+            scores.removeValue(forKey: .glaze)
+        } else {
+            // Even when bullish, require GLAZE to clearly beat the runner-up
+            // so a mildly-positive CHAOS article doesn't get reclassified.
+            let runnerUp = scores.filter { $0.key != .glaze }.values.max() ?? 0
+            if glazeScore <= runnerUp {
+                scores.removeValue(forKey: .glaze)
+            }
+        }
+    }
+
+    return scores.max(by: { $0.value < $1.value })?.key ?? .culture
 }
 
 func scoreSignalType(_ text: String) -> SignalType {
