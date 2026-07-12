@@ -4,6 +4,7 @@ import Combine
 @MainActor
 class FeedViewModel: ObservableObject {
     @Published var items:       [SignalItem] = []
+    @Published var allItems:    [SignalItem] = []   // unfiltered, for Glaze tab
     @Published var brainStats:  BrainStats?
     @Published var sourceStats: [SourceStats] = []
     @Published var totalCount   = 0
@@ -39,6 +40,7 @@ class FeedViewModel: ObservableObject {
             fetched = fetched.filter { $0.domain.rawValue == domain }
         }
         items       = fetched
+        allItems    = ElonDB.shared.fetchRecent(limit: 500)   // unfiltered for Glaze
         sourceStats = ElonDB.shared.fetchStats()
         totalCount  = ElonDB.shared.totalCount()
         brainStats  = computeBrainStats(fetched)
