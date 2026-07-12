@@ -1,16 +1,28 @@
 import SwiftUI
 
-// MARK: - Colours
+// MARK: - Design System
 
 extension Color {
-    static let ewBackground = Color(hex: "#000008")
-    static let ewSurface    = Color(hex: "#00000f")
-    static let ewBorder     = Color(hex: "#002233")
+    // Base palette — pulled directly from icon
+    static let ewVoid       = Color(hex: "#000005")   // deepest background
+    static let ewBackground = Color(hex: "#00000a")
+    static let ewSurface    = Color(hex: "#00040f")   // panel surfaces
+    static let ewSurfaceHi  = Color(hex: "#00071a")   // raised card surface
+    static let ewBorder     = Color(hex: "#00203a")
+    static let ewBorderHi   = Color(hex: "#004466")
+
+    // Neon cyan — the signature glow from the icon
     static let ewCyan       = Color(hex: "#00e5ff")
-    static let ewCyanDim    = Color(hex: "#004455")
-    static let ewAmber      = Color(hex: "#ff6600")
-    static let ewGreen      = Color(hex: "#69ff47")
+    static let ewCyanMid    = Color(hex: "#0099bb")
+    static let ewCyanDim    = Color(hex: "#00344d")
+    static let ewCyanGlow   = Color(hex: "#00e5ff")   // used for shadows
+
+    // Signal colours
+    static let ewAmber      = Color(hex: "#ff7700")
+    static let ewGreen      = Color(hex: "#39ff14")   // neon green
     static let ewRed        = Color(hex: "#ff1744")
+    static let ewGold       = Color(hex: "#ffd740")
+    static let ewPurple     = Color(hex: "#e040fb")
 
     init(hex: String) {
         let h = hex.trimmingCharacters(in: .init(charactersIn: "#"))
@@ -24,6 +36,50 @@ extension Color {
     }
 }
 
+// Reusable glow modifier
+struct GlowModifier: ViewModifier {
+    let color: Color
+    let radius: CGFloat
+    func body(content: Content) -> some View {
+        content
+            .shadow(color: color.opacity(0.8), radius: radius / 2)
+            .shadow(color: color.opacity(0.4), radius: radius)
+            .shadow(color: color.opacity(0.2), radius: radius * 2)
+    }
+}
+extension View {
+    func glow(_ color: Color = .ewCyan, radius: CGFloat = 6) -> some View {
+        modifier(GlowModifier(color: color, radius: radius))
+    }
+}
+
+// Glass card background
+struct GlassCard: ViewModifier {
+    var border: Color = .ewBorder
+    func body(content: Content) -> some View {
+        content
+            .background(
+                ZStack {
+                    Color.ewSurface
+                    LinearGradient(
+                        colors: [Color.ewCyan.opacity(0.04), Color.clear],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                }
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 0)
+                    .strokeBorder(border, lineWidth: 0.5)
+            )
+    }
+}
+extension View {
+    func glassCard(border: Color = .ewBorder) -> some View {
+        modifier(GlassCard(border: border))
+    }
+}
+
 // MARK: - Root
 
 struct ContentView: View {
@@ -32,16 +88,22 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Color.ewBackground.ignoresSafeArea()
+            // Deep space gradient background
+            LinearGradient(
+                colors: [Color.ewVoid, Color(hex: "#000312"), Color.ewVoid],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
             VStack(spacing: 0) {
-                LogoBannerView(scraper: scraper)
-                DomainPulseBarView(vm: vm)
-                Divider().background(Color.ewBorder)
+                HeaderView(scraper: scraper)
+                DomainBarView(vm: vm)
                 HStack(spacing: 0) {
                     FeedPanelView(vm: vm)
-                    Divider().background(Color.ewBorder)
                     RightPanelView(vm: vm, scraper: scraper)
                 }
+                .frame(maxHeight: .infinity)
                 TickerView(vm: vm)
             }
         }
@@ -50,113 +112,252 @@ struct ContentView: View {
     }
 }
 
-// MARK: - Logo Banner
+// MARK: - Header
 
-struct LogoBannerView: View {
+struct HeaderView: View {
     @ObservedObject var scraper: ScraperRunner
     @State private var time = ""
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var radarAngle: Double = 0
+    let clock  = Timer.publish(every: 1,    on: .main, in: .common).autoconnect()
+    let radar  = Timer.publish(every: 0.03, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 8) {
-                    Text("▌").foregroundColor(.ewCyan).font(.system(size: 13, design: .monospaced))
-                    Text("FUTURE").foregroundColor(.ewCyan)
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    Text("▐").foregroundColor(.ewCyan).font(.system(size: 13, design: .monospaced))
-                    Text("E L O N W A T C H")
-                        .font(.system(size: 20, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
-                    Text("▌").foregroundColor(.ewCyan).font(.system(size: 13, design: .monospaced))
-                    Text("SYNC").foregroundColor(.ewCyan)
-                        .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    Text("▐").foregroundColor(.ewCyan).font(.system(size: 13, design: .monospaced))
-                }
-                Text("consciousness mapping  //  signal intelligence  //  real-time thought-stream decoder")
-                    .font(.system(size: 9, design: .monospaced))
-                    .foregroundColor(.ewCyanDim)
-            }
-            .padding(.horizontal, 16)
+        ZStack {
+            // Subtle top-edge glow strip matching icon
+            LinearGradient(
+                colors: [Color.ewCyan.opacity(0.12), Color.clear],
+                startPoint: .top,
+                endPoint: .bottom
+            )
 
-            Spacer()
+            HStack(alignment: .center, spacing: 0) {
 
-            VStack(alignment: .trailing, spacing: 4) {
-                Text(time)
-                    .font(.system(size: 14, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.ewCyan)
-                HStack(spacing: 6) {
-                    Circle()
-                        .fill(scraper.isRunning ? Color.ewAmber : Color.ewGreen)
-                        .frame(width: 7, height: 7)
-                    Text(scraper.isRunning ? "SYNCING" : "IDLE")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(scraper.isRunning ? .ewAmber : .ewGreen)
-                    Text("·  next: \(scraper.nextRunIn)")
-                        .font(.system(size: 10, design: .monospaced))
-                        .foregroundColor(.ewCyanDim)
+                // ── Radar ring animation (from icon) ──
+                RadarRingView(angle: radarAngle)
+                    .frame(width: 56, height: 56)
+                    .padding(.leading, 16)
+
+                // ── Wordmark ──
+                VStack(alignment: .leading, spacing: 3) {
+                    HStack(alignment: .firstTextBaseline, spacing: 0) {
+                        Text("ELON")
+                            .font(.system(size: 26, weight: .black, design: .default))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.white, Color(hex: "#c8e8ff")],
+                                    startPoint: .top, endPoint: .bottom
+                                )
+                            )
+                        Text("WATCH")
+                            .font(.system(size: 26, weight: .black, design: .default))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Color.ewCyan, Color.ewCyanMid],
+                                    startPoint: .top, endPoint: .bottom
+                                )
+                            )
+                            .glow(.ewCyan, radius: 8)
+                    }
+                    HStack(spacing: 8) {
+                        Text("// FUTURE SYNC")
+                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                            .foregroundColor(.ewCyan.opacity(0.7))
+                        Text("·")
+                            .foregroundColor(.ewBorderHi)
+                        Text("consciousness mapping  ·  signal intelligence  ·  real-time thought-stream")
+                            .font(.system(size: 9, design: .monospaced))
+                            .foregroundColor(.ewCyanDim)
+                    }
                 }
+                .padding(.leading, 12)
+
+                Spacer()
+
+                // ── Status cluster ──
+                VStack(alignment: .trailing, spacing: 5) {
+                    Text(time)
+                        .font(.system(size: 18, weight: .semibold, design: .monospaced))
+                        .foregroundColor(.ewCyan)
+                        .glow(.ewCyan, radius: 4)
+
+                    HStack(spacing: 8) {
+                        // Pulse dot
+                        PulseDot(active: scraper.isRunning)
+                        Text(scraper.isRunning ? "SYNCING" : "IDLE")
+                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .foregroundColor(scraper.isRunning ? .ewAmber : .ewGreen)
+                        Text("next \(scraper.nextRunIn)")
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundColor(.ewCyanDim)
+                    }
+                }
+                .padding(.horizontal, 20)
             }
-            .padding(.horizontal, 16)
         }
-        .frame(height: 58)
+        .frame(height: 72)
         .background(Color.ewSurface)
-        .overlay(Divider().background(Color.ewBorder), alignment: .bottom)
-        .onReceive(timer) { _ in
+        .overlay(
+            // Bottom cyan line — matches icon border
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.clear, Color.ewCyan.opacity(0.6), Color.clear],
+                        startPoint: .leading, endPoint: .trailing
+                    )
+                )
+                .frame(height: 1),
+            alignment: .bottom
+        )
+        .onReceive(clock) { _ in
             time = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .medium)
+        }
+        .onReceive(radar) { _ in
+            radarAngle += 1.8
         }
     }
 }
 
-// MARK: - Domain Pulse Bar
+struct RadarRingView: View {
+    let angle: Double
 
-struct DomainPulseBarView: View {
+    var body: some View {
+        ZStack {
+            // Concentric rings — matches icon radar dish rings
+            ForEach([0.9, 0.65, 0.4], id: \.self) { scale in
+                Circle()
+                    .strokeBorder(Color.ewCyan.opacity(0.15 + (1 - scale) * 0.15), lineWidth: 0.5)
+                    .scaleEffect(scale)
+            }
+            // Sweep line
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.clear, Color.ewCyan.opacity(0.6), Color.ewCyan],
+                        startPoint: .leading, endPoint: .trailing
+                    )
+                )
+                .frame(width: 22, height: 1)
+                .offset(x: 11)
+                .rotationEffect(.degrees(angle))
+            // Center dot
+            Circle()
+                .fill(Color.ewCyan)
+                .frame(width: 3, height: 3)
+                .glow(.ewCyan, radius: 4)
+        }
+    }
+}
+
+struct PulseDot: View {
+    let active: Bool
+    @State private var opacity: Double = 1
+    let pulse = Timer.publish(every: 0.6, on: .main, in: .common).autoconnect()
+
+    var body: some View {
+        Circle()
+            .fill(active ? Color.ewAmber : Color.ewGreen)
+            .frame(width: 7, height: 7)
+            .opacity(active ? opacity : 1)
+            .glow(active ? .ewAmber : .ewGreen, radius: 3)
+            .onReceive(pulse) { _ in
+                if active { withAnimation(.easeInOut(duration: 0.5)) { opacity = opacity < 0.4 ? 1 : 0.2 } }
+                else { opacity = 1 }
+            }
+    }
+}
+
+// MARK: - Domain Bar
+
+struct DomainBarView: View {
     @ObservedObject var vm: FeedViewModel
     @State private var pulsePhase = 0
-    let pulseTimer = Timer.publish(every: 0.7, on: .main, in: .common).autoconnect()
-    let pulseChars = ["▏","▎","▍","▌","▋","▊","▉","█","▉","▊","▋","▌","▍","▎"]
+    let pulseTimer = Timer.publish(every: 0.6, on: .main, in: .common).autoconnect()
     let domainOrder: [Domain] = [.space, .ai, .politics, .money, .tech, .chaos, .ego, .culture, .glaze]
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 1) {
             ForEach(domainOrder, id: \.self) { domain in
-                let count  = vm.brainStats?.domainCounts[domain] ?? 0
-                let total  = max(1, vm.allItems.count)
-                let frac   = Double(count) / Double(total)
-                let barLen = max(1, Int(frac * 10))
-                let pulse  = pulseChars[pulsePhase % pulseChars.count]
-                let color  = Color(hex: domain.color)
-                let active = vm.activeDomain == domain.rawValue
-
-                Button(action: {
-                    vm.setDomain(active ? nil : domain.rawValue)
-                }) {
-                    VStack(spacing: 2) {
-                        Text("\(domain.icon) \(domain.rawValue)")
-                            .font(.system(size: 9, weight: .bold, design: .monospaced))
-                        Text(String(repeating: pulse, count: barLen) +
-                             String(repeating: "░", count: 10 - barLen))
-                            .font(.system(size: 8, design: .monospaced))
-                        Text("\(count)")
-                            .font(.system(size: 9, design: .monospaced))
-                    }
-                    .foregroundColor(active ? .white : color)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 5)
-                    .background(active ? color.opacity(0.18) : Color.clear)
-                    .cornerRadius(4)
-                }
-                .buttonStyle(.plain)
-                .frame(maxWidth: .infinity)
-
-                if domain != domainOrder.last {
-                    Divider().background(Color.ewBorder)
+                DomainCell(
+                    domain: domain,
+                    count: vm.brainStats?.domainCounts[domain] ?? 0,
+                    total: max(1, vm.allItems.count),
+                    pulsePhase: pulsePhase,
+                    active: vm.activeDomain == domain.rawValue
+                ) {
+                    vm.setDomain(vm.activeDomain == domain.rawValue ? nil : domain.rawValue)
                 }
             }
         }
-        .frame(height: 52)
-        .background(Color.ewBackground)
+        .padding(.horizontal, 1)
+        .frame(height: 58)
+        .background(Color.ewVoid)
+        .overlay(
+            Rectangle()
+                .fill(Color.ewBorder)
+                .frame(height: 1),
+            alignment: .bottom
+        )
         .onReceive(pulseTimer) { _ in pulsePhase += 1 }
+    }
+}
+
+struct DomainCell: View {
+    let domain: Domain
+    let count: Int
+    let total: Int
+    let pulsePhase: Int
+    let active: Bool
+    let onTap: () -> Void
+
+    private let pulseChars = ["▁","▂","▃","▄","▅","▆","▇","█","▇","▆","▅","▄","▃","▂"]
+
+    var body: some View {
+        let frac   = Double(count) / Double(total)
+        let barLen = max(1, Int(frac * 8))
+        let pulse  = pulseChars[pulsePhase % pulseChars.count]
+        let color  = Color(hex: domain.color)
+
+        Button(action: onTap) {
+            ZStack {
+                // Active state: glowing fill
+                if active {
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(color.opacity(0.12))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .strokeBorder(color.opacity(0.5), lineWidth: 1)
+                        )
+                        .shadow(color: color.opacity(0.3), radius: 6)
+                }
+
+                VStack(spacing: 2) {
+                    Text(domain.icon)
+                        .font(.system(size: 14))
+                        .shadow(color: color.opacity(active ? 0.9 : 0.3), radius: 4)
+
+                    Text(domain.rawValue)
+                        .font(.system(size: 8, weight: .bold, design: .monospaced))
+                        .foregroundColor(active ? .white : color.opacity(0.8))
+
+                    // Animated bar
+                    HStack(spacing: 0) {
+                        Text(String(repeating: pulse, count: barLen))
+                            .foregroundColor(color.opacity(active ? 1 : 0.6))
+                        Text(String(repeating: "▁", count: 8 - barLen))
+                            .foregroundColor(color.opacity(0.15))
+                    }
+                    .font(.system(size: 7, design: .monospaced))
+
+                    Text("\(count)")
+                        .font(.system(size: 9, weight: .medium, design: .monospaced))
+                        .foregroundColor(active ? .white : color.opacity(0.7))
+                }
+                .padding(.vertical, 5)
+                .padding(.horizontal, 2)
+            }
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -165,37 +366,50 @@ struct DomainPulseBarView: View {
 struct FeedPanelView: View {
     @ObservedObject var vm: FeedViewModel
 
-    var activeDomainLabel: String {
-        if let d = vm.activeDomain { return " · \(d)" }
-        return ""
-    }
-
     var body: some View {
         VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text("◈ CONSCIOUSNESS FEED\(activeDomainLabel)")
+            // Header bar
+            HStack(spacing: 12) {
+                HStack(spacing: 6) {
+                    Image(systemName: "dot.radiowaves.up.forward")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.ewCyan)
+                        .glow(.ewCyan, radius: 3)
+                    Text(vm.activeDomain != nil
+                         ? "FEED  ·  \(vm.activeDomain!)"
+                         : "CONSCIOUSNESS FEED")
+                        .font(.system(size: 11, weight: .bold, design: .monospaced))
+                        .foregroundColor(.white)
+                }
+                Spacer()
+                // Source filter pills
+                SourcePills(vm: vm)
+                // Count badge
+                Text("\(vm.items.count)")
                     .font(.system(size: 10, weight: .bold, design: .monospaced))
                     .foregroundColor(.ewCyan)
-                Spacer()
-                Text("\(vm.items.count) signals")
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(.ewCyanDim)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color.ewCyan.opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 3)
+                            .strokeBorder(Color.ewCyan.opacity(0.3), lineWidth: 0.5)
+                    )
+                    .cornerRadius(3)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
             .background(Color.ewSurface)
-            .overlay(Divider().background(Color.ewBorder), alignment: .bottom)
+            .overlay(Rectangle().fill(Color.ewBorder).frame(height: 0.5), alignment: .bottom)
 
-            // Source filter tabs
-            SourceFilterBar(vm: vm)
-
-            // Feed
+            // Feed rows
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(vm.items) { item in
-                        SignalRowView(item: item)
-                        Divider().background(Color.ewBorder.opacity(0.35))
+                        SignalRow(item: item)
+                        Rectangle()
+                            .fill(Color.ewBorder.opacity(0.4))
+                            .frame(height: 0.5)
                     }
                 }
             }
@@ -205,98 +419,114 @@ struct FeedPanelView: View {
     }
 }
 
-struct SourceFilterBar: View {
+struct SourcePills: View {
     @ObservedObject var vm: FeedViewModel
-    let sources = ["ALL", "twitter", "google-news", "reddit"]
+    let sources: [(String, String, String)] = [
+        ("ALL", "ALL", "#00e5ff"),
+        ("twitter", "𝕏", "#00e5ff"),
+        ("google-news", "NEWS", "#ffea00"),
+        ("reddit", "REDDIT", "#e040fb"),
+    ]
 
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(sources, id: \.self) { src in
+        HStack(spacing: 4) {
+            ForEach(sources, id: \.0) { (src, label, hex) in
                 let active = vm.activeSource == src && vm.activeDomain == nil
                 Button(action: { vm.setSource(src) }) {
-                    Text(sourceLabel(src))
-                        .font(.system(size: 10, weight: active ? .bold : .regular, design: .monospaced))
-                        .foregroundColor(active ? .white : .ewCyanDim)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 5)
-                        .background(active ? Color.ewBorder : Color.clear)
+                    Text(label)
+                        .font(.system(size: 9, weight: active ? .bold : .medium, design: .monospaced))
+                        .foregroundColor(active ? Color(hex: hex) : Color(hex: hex).opacity(0.4))
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(active ? Color(hex: hex).opacity(0.1) : Color.clear)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .strokeBorder(
+                                    active ? Color(hex: hex).opacity(0.5) : Color.ewBorder,
+                                    lineWidth: 0.5
+                                )
+                        )
+                        .cornerRadius(3)
                 }
                 .buttonStyle(.plain)
-                if src != sources.last { Divider().background(Color.ewBorder) }
             }
-            Spacer()
-        }
-        .frame(height: 26)
-        .background(Color.ewSurface)
-        .overlay(Divider().background(Color.ewBorder), alignment: .bottom)
-    }
-
-    func sourceLabel(_ s: String) -> String {
-        switch s {
-        case "ALL":          return "ALL"
-        case "twitter":      return "𝕏 TWITTER"
-        case "google-news":  return "◉ NEWS"
-        case "reddit":       return "⬡ REDDIT"
-        default:             return s
         }
     }
 }
 
 // MARK: - Signal Row
 
-struct SignalRowView: View {
+struct SignalRow: View {
     let item: SignalItem
+    @State private var hovered = false
 
     var body: some View {
-        HStack(spacing: 8) {
-            // Urgency
-            urgencyGlyph
-                .frame(width: 18)
+        HStack(spacing: 0) {
+            // Left urgency stripe
+            Rectangle()
+                .fill(urgencyColor.opacity(item.urgency >= 7 ? 0.9 : 0.3))
+                .frame(width: 3)
 
-            // Domain icon
-            Text(item.domain.icon)
-                .font(.system(size: 12))
+            HStack(spacing: 10) {
+                // Domain icon + urgency
+                ZStack(alignment: .topTrailing) {
+                    Text(item.domain.icon)
+                        .font(.system(size: 16))
+                        .shadow(color: Color(hex: item.domain.color).opacity(0.6), radius: 4)
 
-            // Source icon
-            Text(sourceIcon)
-                .font(.system(size: 11, weight: .bold, design: .monospaced))
-                .foregroundColor(Color(hex: sourceColor))
-                .frame(width: 16)
+                    if item.urgency >= 7 {
+                        Text("\(item.urgency)")
+                            .font(.system(size: 7, weight: .black, design: .monospaced))
+                            .foregroundColor(.white)
+                            .padding(2)
+                            .background(urgencyColor)
+                            .cornerRadius(2)
+                            .offset(x: 4, y: -2)
+                    }
+                }
+                .frame(width: 28)
 
-            // Author
-            Text(item.author.isEmpty ? "—" : item.author)
-                .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(Color(hex: sourceColor).opacity(0.8))
-                .frame(width: 110, alignment: .leading)
-                .lineLimit(1)
+                // Source badge
+                Text(sourceIcon)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundColor(Color(hex: sourceColor))
+                    .shadow(color: Color(hex: sourceColor).opacity(0.6), radius: 3)
+                    .frame(width: 18)
 
-            // Signal type
-            Text(item.signalType.rawValue)
-                .font(.system(size: 9, weight: .medium, design: .monospaced))
-                .foregroundColor(.ewCyanDim)
-                .frame(width: 66, alignment: .leading)
+                // Author
+                Text(item.author.isEmpty ? "—" : item.author)
+                    .font(.system(size: 10, design: .monospaced))
+                    .foregroundColor(Color(hex: sourceColor).opacity(0.75))
+                    .frame(width: 120, alignment: .leading)
+                    .lineLimit(1)
 
-            // Sentiment
-            sentimentBadge
-                .frame(width: 70, alignment: .leading)
+                // Sentiment pill
+                SentimentPill(sentiment: item.sentiment)
 
-            // Title — most important, gets the space
-            Text(item.title)
-                .font(.system(size: 11, design: .monospaced))
-                .foregroundColor(titleColor)
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                // Title
+                Text(item.title)
+                    .font(.system(size: 12))
+                    .foregroundColor(titleColor)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Time
-            Text(shortTime(item.scrapedAt))
-                .font(.system(size: 9, design: .monospaced))
-                .foregroundColor(.ewCyanDim)
-                .frame(width: 54, alignment: .trailing)
+                // Time
+                Text(shortTime(item.scrapedAt))
+                    .font(.system(size: 9, design: .monospaced))
+                    .foregroundColor(.ewCyanDim)
+                    .frame(width: 56, alignment: .trailing)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 7)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
         .background(rowBg)
         .contentShape(Rectangle())
+        .onHover { hovered = $0 }
+        .overlay(
+            hovered
+            ? Rectangle().fill(Color.ewCyan.opacity(0.04))
+            : nil
+        )
         .onTapGesture {
             if let url = URL(string: item.url), !item.url.isEmpty {
                 NSWorkspace.shared.open(url)
@@ -304,46 +534,26 @@ struct SignalRowView: View {
         }
     }
 
-    var urgencyGlyph: some View {
-        Group {
-            if item.urgency >= 9 {
-                Text("!!")
-                    .font(.system(size: 10, weight: .black, design: .monospaced))
-                    .foregroundColor(.ewRed)
-            } else if item.urgency >= 7 {
-                Text("▲▲")
-                    .font(.system(size: 10, weight: .bold, design: .monospaced))
-                    .foregroundColor(Color(hex: "#ff6d00"))
-            } else if item.urgency >= 4 {
-                Text("▲·")
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(.yellow)
-            } else {
-                Text("··")
-                    .font(.system(size: 10, design: .monospaced))
-                    .foregroundColor(.ewCyanDim)
-            }
-        }
-    }
-
-    var sentimentBadge: some View {
-        Text(item.sentiment.rawValue)
-            .font(.system(size: 9, weight: .medium, design: .monospaced))
-            .foregroundColor(Color(hex: item.sentiment.color))
+    var urgencyColor: Color {
+        if item.urgency >= 9 { return .ewRed }
+        if item.urgency >= 7 { return .ewAmber }
+        if item.urgency >= 4 { return .yellow }
+        return .ewCyanDim
     }
 
     var titleColor: Color {
-        if item.domain == .glaze   { return Color(hex: "#fff3b0") }
-        if item.domain == .chaos   { return Color(hex: "#ffcdd2") }
+        if item.domain == .glaze   { return Color(hex: "#fff0a0") }
+        if item.domain == .chaos   { return Color(hex: "#ffb3ba") }
+        if item.urgency >= 9       { return Color(hex: "#ff8a80") }
         if item.source == "twitter" { return .white }
-        return Color(white: 0.88)
+        return Color(white: 0.85)
     }
 
     var rowBg: Color {
-        if item.urgency >= 9     { return Color.ewRed.opacity(0.07) }
-        if item.urgency >= 7     { return Color(hex: "#ff6d00").opacity(0.05) }
-        if item.domain == .chaos  { return Color.ewRed.opacity(0.04) }
-        if item.domain == .glaze  { return Color(hex: "#ffd740").opacity(0.04) }
+        if item.urgency >= 9     { return Color.ewRed.opacity(0.06) }
+        if item.urgency >= 7     { return Color.ewAmber.opacity(0.04) }
+        if item.domain == .chaos  { return Color.ewRed.opacity(0.03) }
+        if item.domain == .glaze  { return Color.ewGold.opacity(0.04) }
         return Color.clear
     }
 
@@ -355,7 +565,6 @@ struct SignalRowView: View {
         default:            return "·"
         }
     }
-
     var sourceColor: String {
         switch item.source {
         case "twitter":     return "#00e5ff"
@@ -364,7 +573,6 @@ struct SignalRowView: View {
         default:            return "#546e7a"
         }
     }
-
     func shortTime(_ s: String) -> String {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -372,7 +580,25 @@ struct SignalRowView: View {
             return DateFormatter.localizedString(from: d, dateStyle: .none, timeStyle: .medium)
         }
         let parts = s.split(separator: "T")
-        return parts.count > 1 ? String(parts[1].prefix(8)) : s.prefix(8).description
+        return parts.count > 1 ? String(parts[1].prefix(8)) : String(s.prefix(8))
+    }
+}
+
+struct SentimentPill: View {
+    let sentiment: Sentiment
+    var body: some View {
+        Text(sentiment.rawValue)
+            .font(.system(size: 8, weight: .bold, design: .monospaced))
+            .foregroundColor(Color(hex: sentiment.color))
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .background(Color(hex: sentiment.color).opacity(0.1))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .strokeBorder(Color(hex: sentiment.color).opacity(0.3), lineWidth: 0.5)
+            )
+            .cornerRadius(3)
+            .frame(width: 68, alignment: .leading)
     }
 }
 
@@ -388,10 +614,14 @@ struct RightPanelView: View {
             Divider().background(Color.ewBorder)
             StatsPanelView(vm: vm)
             Divider().background(Color.ewBorder)
-            SyncPanelView(scraper: scraper, vm: vm)
+            SyncPanelView(scraper: scraper)
         }
-        .frame(minWidth: 310, maxWidth: 310, maxHeight: .infinity)
+        .frame(minWidth: 300, maxWidth: 300)
         .background(Color.ewSurface)
+        .overlay(
+            Rectangle().fill(Color.ewBorder).frame(width: 0.5),
+            alignment: .leading
+        )
     }
 }
 
@@ -402,110 +632,129 @@ struct BrainPanelView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PanelTitle("◈ SIGNAL BRAIN")
+            PanelHeader(icon: "brain", label: "SIGNAL BRAIN")
 
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 10) {
                     if let stats = vm.brainStats {
-                        SectionLabel("DOMAIN BREAKDOWN")
-                        let sorted = Domain.allCases.sorted {
-                            (stats.domainCounts[$0] ?? 0) > (stats.domainCounts[$1] ?? 0)
-                        }.prefix(6)
+                        // Domain breakdown
+                        SectionHeader("DOMAIN BREAKDOWN")
+                        let sorted = Domain.allCases
+                            .sorted { (stats.domainCounts[$0] ?? 0) > (stats.domainCounts[$1] ?? 0) }
+                            .prefix(6)
                         ForEach(Array(sorted), id: \.self) { d in
-                            DomainBarRow(domain: d,
-                                         count: stats.domainCounts[d] ?? 0,
-                                         total: max(1, vm.allItems.count))
+                            BrainBarRow(
+                                label: "\(d.icon) \(d.rawValue)",
+                                count: stats.domainCounts[d] ?? 0,
+                                total: max(1, vm.allItems.count),
+                                color: Color(hex: d.color)
+                            )
                         }
 
-                        Divider().background(Color.ewBorder).padding(.vertical, 2)
-                        SectionLabel("SIGNAL TYPES")
-                        ForEach(SignalType.allCases, id: \.self) { s in
-                            let c = stats.signalTypeCounts[s] ?? 0
-                            if c > 0 {
-                                HStack {
-                                    Text(s.rawValue)
-                                        .font(.system(size: 10, design: .monospaced))
-                                        .foregroundColor(.ewCyanDim)
-                                        .frame(width: 90, alignment: .leading)
-                                    Text("\(c)")
-                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                        .foregroundColor(.ewCyan)
-                                }
-                            }
-                        }
-
-                        Divider().background(Color.ewBorder).padding(.vertical, 2)
-                        SectionLabel("SENTIMENT MIX")
+                        SectionHeader("SENTIMENT")
                         ForEach(Sentiment.allCases, id: \.self) { s in
                             let c = stats.sentimentCounts[s] ?? 0
                             if c > 0 {
-                                HStack {
-                                    Text(s.rawValue)
-                                        .font(.system(size: 10, design: .monospaced))
-                                        .foregroundColor(Color(hex: s.color))
-                                        .frame(width: 90, alignment: .leading)
-                                    Text("\(c)")
-                                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                        .foregroundColor(Color(hex: s.color))
-                                }
+                                BrainBarRow(
+                                    label: s.rawValue,
+                                    count: c,
+                                    total: max(1, vm.items.count),
+                                    color: Color(hex: s.color)
+                                )
                             }
                         }
 
-                        Divider().background(Color.ewBorder).padding(.vertical, 2)
-                        HStack {
-                            Text("AVG URGENCY")
-                                .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.ewCyanDim)
-                            Spacer()
-                            Text(String(format: "%.1f / 10", stats.avgUrgency))
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                .foregroundColor(stats.avgUrgency > 6 ? .ewRed : .yellow)
+                        // Stats row
+                        Divider().background(Color.ewBorder)
+                        HStack(spacing: 0) {
+                            StatBox(
+                                value: String(format: "%.1f", stats.avgUrgency),
+                                label: "AVG URG",
+                                color: stats.avgUrgency > 6 ? .ewRed : .yellow
+                            )
+                            Divider().background(Color.ewBorder)
+                            StatBox(
+                                value: "\(stats.highSignalCount)",
+                                label: "HIGH SIG",
+                                color: .ewRed
+                            )
+                            Divider().background(Color.ewBorder)
+                            StatBox(
+                                value: "\(stats.totalCount)",
+                                label: "TOTAL",
+                                color: .ewCyan
+                            )
                         }
-                        HStack {
-                            Text("HIGH SIGNAL")
-                                .font(.system(size: 10, design: .monospaced))
-                                .foregroundColor(.ewCyanDim)
-                            Spacer()
-                            Text("\(stats.highSignalCount)")
-                                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                                .foregroundColor(.ewRed)
-                        }
+                        .frame(height: 44)
+                        .glassCard()
                     } else {
                         Text("// awaiting signal ...")
                             .font(.system(size: 10, design: .monospaced))
                             .foregroundColor(.ewCyanDim)
                     }
                 }
-                .padding(10)
+                .padding(12)
             }
         }
         .frame(maxHeight: .infinity)
     }
 }
 
-struct DomainBarRow: View {
-    let domain: Domain
+struct BrainBarRow: View {
+    let label: String
     let count: Int
     let total: Int
+    let color: Color
 
     var body: some View {
-        let frac   = Double(count) / Double(total)
-        let barLen = max(1, Int(frac * 10))
-        let color  = Color(hex: domain.color)
-
-        HStack(spacing: 6) {
-            Text("\(domain.icon) \(domain.rawValue)")
+        let frac = min(1.0, Double(count) / Double(total))
+        HStack(spacing: 8) {
+            Text(label)
                 .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(color)
-                .frame(width: 100, alignment: .leading)
-            Text(String(repeating: "█", count: barLen) +
-                 String(repeating: "░", count: 10 - barLen))
-                .font(.system(size: 9, design: .monospaced))
-                .foregroundColor(color.opacity(0.8))
+                .foregroundColor(color.opacity(0.9))
+                .frame(width: 110, alignment: .leading)
+                .lineLimit(1)
+            GeometryReader { geo in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(color.opacity(0.08))
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(
+                            LinearGradient(
+                                colors: [color.opacity(0.9), color.opacity(0.5)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .frame(width: max(2, geo.size.width * frac))
+                        .shadow(color: color.opacity(0.5), radius: 3)
+                }
+            }
+            .frame(height: 6)
             Text("\(count)")
-                .font(.system(size: 10, design: .monospaced))
+                .font(.system(size: 10, weight: .semibold, design: .monospaced))
                 .foregroundColor(color)
+                .frame(width: 28, alignment: .trailing)
         }
+    }
+}
+
+struct StatBox: View {
+    let value: String
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(size: 16, weight: .black, design: .monospaced))
+                .foregroundColor(color)
+                .glow(color, radius: 4)
+            Text(label)
+                .font(.system(size: 8, weight: .bold, design: .monospaced))
+                .foregroundColor(.ewCyanDim)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -516,44 +765,42 @@ struct StatsPanelView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PanelTitle("◈ SOURCE COUNTS")
-            VStack(alignment: .leading, spacing: 5) {
+            PanelHeader(icon: "chart.bar.fill", label: "SOURCES")
+            VStack(alignment: .leading, spacing: 6) {
                 ForEach(vm.sourceStats, id: \.source) { stat in
-                    HStack {
-                        Text(sourceIcon(stat.source))
-                            .font(.system(size: 11, weight: .bold, design: .monospaced))
-                            .foregroundColor(Color(hex: sourceColor(stat.source)))
+                    HStack(spacing: 8) {
+                        Text(srcIcon(stat.source))
+                            .font(.system(size: 13))
+                            .foregroundColor(Color(hex: srcColor(stat.source)))
+                            .shadow(color: Color(hex: srcColor(stat.source)).opacity(0.6), radius: 3)
                             .frame(width: 18)
                         Text(stat.source)
                             .font(.system(size: 10, design: .monospaced))
-                            .foregroundColor(Color(hex: sourceColor(stat.source)))
-                            .frame(width: 96, alignment: .leading)
-                        Spacer()
+                            .foregroundColor(Color(hex: srcColor(stat.source)).opacity(0.8))
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         Text("\(stat.count)")
-                            .font(.system(size: 10, weight: .bold, design: .monospaced))
+                            .font(.system(size: 11, weight: .bold, design: .monospaced))
                             .foregroundColor(.ewGreen)
-                        Text(shortTime(stat.lastSeen))
-                            .font(.system(size: 9, design: .monospaced))
-                            .foregroundColor(.ewCyanDim)
-                            .frame(width: 44, alignment: .trailing)
+                            .glow(.ewGreen, radius: 2)
                     }
                 }
-                Divider().background(Color.ewBorder)
+                Rectangle().fill(Color.ewBorder).frame(height: 0.5)
                 HStack {
-                    Text("TOTAL")
+                    Text("TOTAL SIGNALS")
                         .font(.system(size: 10, weight: .bold, design: .monospaced))
                         .foregroundColor(.white)
                     Spacer()
                     Text("\(vm.totalCount)")
-                        .font(.system(size: 10, weight: .bold, design: .monospaced))
-                        .foregroundColor(.white)
+                        .font(.system(size: 13, weight: .black, design: .monospaced))
+                        .foregroundColor(.ewCyan)
+                        .glow(.ewCyan, radius: 3)
                 }
             }
-            .padding(10)
+            .padding(12)
         }
     }
 
-    func sourceIcon(_ s: String) -> String {
+    func srcIcon(_ s: String) -> String {
         switch s {
         case "twitter":     return "𝕏"
         case "google-news": return "◉"
@@ -561,7 +808,7 @@ struct StatsPanelView: View {
         default:            return "·"
         }
     }
-    func sourceColor(_ s: String) -> String {
+    func srcColor(_ s: String) -> String {
         switch s {
         case "twitter":     return "#00e5ff"
         case "google-news": return "#ffea00"
@@ -569,62 +816,91 @@ struct StatsPanelView: View {
         default:            return "#546e7a"
         }
     }
-    func shortTime(_ s: String) -> String {
-        let parts = s.split(separator: "T")
-        return parts.count > 1 ? String(parts[1].prefix(5)) : s.prefix(5).description
-    }
 }
 
 // MARK: - Sync Panel
 
 struct SyncPanelView: View {
     @ObservedObject var scraper: ScraperRunner
-    @ObservedObject var vm: FeedViewModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PanelTitle("◈ SYNC ENGINE")
-            VStack(alignment: .leading, spacing: 7) {
-                SyncRow(label: "STATUS",    value: scraper.isRunning ? "● SYNCING" : "■ IDLE",
-                        valueColor: scraper.isRunning ? .ewAmber : .ewGreen)
-                SyncRow(label: "LAST RUN",  value: scraper.lastRun,    valueColor: .ewCyan)
-                SyncRow(label: "NEXT SYNC", value: scraper.nextRunIn,  valueColor: .ewCyan)
-                SyncRow(label: "NEW ITEMS", value: "\(scraper.newItems)", valueColor: .ewGreen)
-                Divider().background(Color.ewBorder)
+            PanelHeader(icon: "arrow.triangle.2.circlepath", label: "SYNC ENGINE")
+            VStack(spacing: 8) {
+                HStack {
+                    Text("STATUS")
+                        .font(.system(size: 9, weight: .bold, design: .monospaced))
+                        .foregroundColor(.ewCyanDim)
+                    Spacer()
+                    Text(scraper.isRunning ? "● SYNCING" : "■ IDLE")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundColor(scraper.isRunning ? .ewAmber : .ewGreen)
+                        .glow(scraper.isRunning ? .ewAmber : .ewGreen, radius: 3)
+                }
+                HStack {
+                    Text("LAST RUN")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundColor(.ewCyanDim)
+                    Spacer()
+                    Text(scraper.lastRun)
+                        .font(.system(size: 10, design: .monospaced))
+                        .foregroundColor(.ewCyan)
+                }
+                HStack {
+                    Text("NEXT SYNC")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundColor(.ewCyanDim)
+                    Spacer()
+                    Text(scraper.nextRunIn)
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundColor(.ewCyan)
+                }
+                HStack {
+                    Text("NEW SIGNALS")
+                        .font(.system(size: 9, design: .monospaced))
+                        .foregroundColor(.ewCyanDim)
+                    Spacer()
+                    Text("\(scraper.newItems)")
+                        .font(.system(size: 10, weight: .bold, design: .monospaced))
+                        .foregroundColor(.ewGreen)
+                }
+
+                // Sync Now button — glowing cyan
                 Button(action: { scraper.runNow() }) {
-                    HStack {
-                        Spacer()
-                        Text("⟳  SYNC NOW")
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 11, weight: .semibold))
+                        Text("SYNC NOW")
                             .font(.system(size: 11, weight: .bold, design: .monospaced))
-                        Spacer()
                     }
-                    .padding(.vertical, 7)
-                    .background(Color.ewBorder)
-                    .cornerRadius(5)
-                    .foregroundColor(.ewCyan)
+                    .foregroundColor(scraper.isRunning ? .ewCyanDim : .ewCyan)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                    .background(
+                        ZStack {
+                            Color.ewCyan.opacity(scraper.isRunning ? 0.03 : 0.08)
+                            if !scraper.isRunning {
+                                LinearGradient(
+                                    colors: [Color.ewCyan.opacity(0.15), Color.clear],
+                                    startPoint: .top, endPoint: .bottom
+                                )
+                            }
+                        }
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .strokeBorder(
+                                Color.ewCyan.opacity(scraper.isRunning ? 0.15 : 0.5),
+                                lineWidth: 1
+                            )
+                    )
+                    .cornerRadius(6)
+                    .shadow(color: scraper.isRunning ? .clear : Color.ewCyan.opacity(0.2), radius: 8)
                 }
                 .buttonStyle(.plain)
                 .disabled(scraper.isRunning)
-                .opacity(scraper.isRunning ? 0.5 : 1)
             }
-            .padding(10)
-        }
-    }
-}
-
-private struct SyncRow: View {
-    let label: String
-    let value: String
-    let valueColor: Color
-    var body: some View {
-        HStack {
-            Text(label)
-                .font(.system(size: 10, design: .monospaced))
-                .foregroundColor(.ewCyanDim)
-            Spacer()
-            Text(value)
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                .foregroundColor(valueColor)
+            .padding(12)
         }
     }
 }
@@ -633,72 +909,95 @@ private struct SyncRow: View {
 
 struct TickerView: View {
     @ObservedObject var vm: FeedViewModel
-    @State private var offset: CGFloat = 0
+    @State private var offset: CGFloat = 2000
     @State private var textWidth: CGFloat = 0
 
     var tickerText: String {
         let high  = vm.items.filter { $0.urgency >= 5 }
         let items = high.isEmpty ? Array(vm.items.prefix(15)) : high
         return items.map {
-            "  \($0.domain.icon) [\($0.domain.rawValue)] U:\($0.urgency)  \($0.title.prefix(80))  ·"
+            "  \($0.domain.icon)  \($0.title.prefix(90))  ·"
         }.joined()
     }
 
     var body: some View {
-        GeometryReader { geo in
-            Text(tickerText)
-                .font(.system(size: 10, weight: .semibold, design: .monospaced))
-                .foregroundColor(.ewAmber)
-                .fixedSize()
-                .offset(x: offset)
-                .onAppear {
-                    textWidth = CGFloat(tickerText.count) * 6.8
-                    withAnimation(.linear(duration: Double(tickerText.count) * 0.055)
-                        .repeatForever(autoreverses: false)) {
-                        offset = -textWidth
-                    }
-                }
-                .onChange(of: tickerText) {
-                    offset = geo.size.width
-                    textWidth = CGFloat(tickerText.count) * 6.8
-                    withAnimation(.linear(duration: Double(tickerText.count) * 0.055)
-                        .repeatForever(autoreverses: false)) {
-                        offset = -textWidth
-                    }
-                }
+        ZStack {
+            Color.ewVoid
+            GeometryReader { geo in
+                Text(tickerText)
+                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    .foregroundColor(.ewAmber)
+                    .shadow(color: Color.ewAmber.opacity(0.5), radius: 3)
+                    .fixedSize()
+                    .offset(x: offset)
+                    .onAppear { startScroll(geo.size.width) }
+                    .onChange(of: tickerText) { startScroll(geo.size.width) }
+            }
         }
         .frame(height: 20)
         .clipped()
-        .background(Color.ewSurface)
-        .overlay(Divider().background(Color.ewBorder), alignment: .top)
+        .overlay(
+            Rectangle()
+                .fill(
+                    LinearGradient(
+                        colors: [Color.ewCyan.opacity(0.4), Color.clear],
+                        startPoint: .leading, endPoint: .trailing
+                    )
+                )
+                .frame(height: 1),
+            alignment: .top
+        )
+    }
+
+    func startScroll(_ viewWidth: CGFloat) {
+        let charWidth: CGFloat = 6.8
+        textWidth = CGFloat(tickerText.count) * charWidth
+        offset = viewWidth
+        withAnimation(.linear(duration: Double(tickerText.count) * 0.05)
+            .repeatForever(autoreverses: false)) {
+            offset = -textWidth
+        }
     }
 }
 
-// MARK: - Helpers
+// MARK: - Shared helpers
 
-struct PanelTitle: View {
+struct PanelHeader: View {
+    let icon: String
+    let label: String
+
+    var body: some View {
+        HStack(spacing: 7) {
+            Image(systemName: icon)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(.ewCyan)
+                .glow(.ewCyan, radius: 3)
+            Text(label)
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .foregroundColor(.white)
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(
+            LinearGradient(
+                colors: [Color.ewCyan.opacity(0.07), Color.clear],
+                startPoint: .leading, endPoint: .trailing
+            )
+        )
+        .overlay(Rectangle().fill(Color.ewBorder).frame(height: 0.5), alignment: .bottom)
+    }
+}
+
+struct SectionHeader: View {
     let text: String
     init(_ text: String) { self.text = text }
     var body: some View {
         HStack {
+            Rectangle().fill(Color.ewCyan.opacity(0.4)).frame(width: 2, height: 10).cornerRadius(1)
             Text(text)
-                .font(.system(size: 10, weight: .bold, design: .monospaced))
-                .foregroundColor(.ewCyan)
-            Spacer()
+                .font(.system(size: 9, weight: .bold, design: .monospaced))
+                .foregroundColor(.ewCyan.opacity(0.6))
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(Color.ewSurface)
-        .overlay(Divider().background(Color.ewBorder), alignment: .bottom)
-    }
-}
-
-struct SectionLabel: View {
-    let text: String
-    init(_ text: String) { self.text = text }
-    var body: some View {
-        Text("── \(text)")
-            .font(.system(size: 9, design: .monospaced))
-            .foregroundColor(.ewCyanDim)
     }
 }
